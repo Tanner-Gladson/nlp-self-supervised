@@ -68,23 +68,35 @@ def featurize(sentence: str, embeddings: gensim.models.keyedvectors.KeyedVectors
         except KeyError:
             pass
 
-    # TODO: complete the function to compute the average embedding of the sentence
-    # your return should be
-    # None - if the vector sequence is empty, i.e. the sentence is empty or None of the words in the sentence is in the embedding vocabulary
-    # A torch tensor of shape (embed_dim,) - the average word embedding of the sentence
-    # Hint: follow the hints in the pdf description
-    raise NotImplementedError
+    # We don't want to embed an empty sentence
+    words = sentence.split()
+    if len(words) == 0:
+        return None
+    
+    # The embedding of a sentence is the average of all its word embeddings
+    has_embedding_flag = False
+    embedding = torch.zeros(embeddings.vector_size)
+    for word in words:
+        if word in embeddings:
+            has_embedding_flag = True
+            embedding += (embeddings[word] / len(words))
+
+    # We don't want to return a sentence we couldn't embed
+    if not has_embedding_flag:
+        return None
+    return embedding
 
 
 def create_tensor_dataset(raw_data: Dict[str, List[Union[int, str]]],
                           embeddings: gensim.models.keyedvectors.KeyedVectors) -> TensorDataset:
     all_features, all_labels = [], []
     for text, label in tqdm(zip(raw_data['text'], raw_data['label'])):
-
-        # TODO: complete the for loop to featurize each sentence
-        # only add the feature and label to the list if the feature is not None
-        raise NotImplementedError
-        # your code ends here
+        # Interesting, we pass in our embeddings so it's not hardcoded. Set at
+        # the policy level
+        feature = featurize(text, embeddings)
+        if feature is not None:
+            all_features.append(feature) 
+            all_labels.append(label)
 
     # stack all features and labels into two single tensors and create a TensorDataset
     features_tensor = torch.stack(all_features)
@@ -107,25 +119,19 @@ Defining our First PyTorch Model
 """
 
 
+
 class SentimentClassifier(nn.Module):
     def __init__(self, embed_dim, num_classes):
         super().__init__()
         self.embed_dim = embed_dim
         self.num_classes = num_classes
-
-        # TODO: define the linear layer
-        # Hint: follow the hints in the pdf description
-        raise NotImplementedError
-        # your code ends here
-
+        
+        # We need a linear classifier to train
+        self.linear = nn.Linear(embed_dim, num_classes)
         self.loss = nn.CrossEntropyLoss(reduction='mean')
 
     def forward(self, inp):
-        # TODO: complete the forward function
-        # Hint: follow the hints in the pdf description
-        raise NotImplementedError
-        # your code ends here
-
+        logits = self.linear(inp)
         return logits
 
 
@@ -135,11 +141,20 @@ Chain Everything Together: Training and Evaluation
 
 
 def accuracy(logits: torch.FloatTensor, labels: torch.LongTensor) -> torch.FloatTensor:
-    assert logits.shape[0] == labels.shape[0]
+    assert logits.shape[0] == labels.shape[0] 
     # TODO: complete the function to compute the accuracy
     # Hint: follow the hints in the pdf description, the return should be a tensor of 0s and 1s with the same shape as labels
     # labels is a tensor of shape (batch_size,)
     # logits is a tensor of shape (batch_size, num_classes)
+
+    # Question: what is in the label vector?
+    correct = torch.zeros(labels.shape[0])
+    for i in range(logits.shape[0]):
+        if torch.argmax(logits[i]) == labels[i]:
+            correct[i] = 1
+        else:
+            correct[i] = 0
+
     raise NotImplementedError
 
 
@@ -183,6 +198,7 @@ def train(model: SentimentClassifier,
             # will explain more about it in future lectures and homework
             optimizer.zero_grad()
             inp, labels = batch
+            print(labels) #TODO: remove
             # forward pass
             logits = model(inp)
             # compute loss and backpropagate
