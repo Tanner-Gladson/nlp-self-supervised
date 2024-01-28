@@ -142,20 +142,12 @@ Chain Everything Together: Training and Evaluation
 
 def accuracy(logits: torch.FloatTensor, labels: torch.LongTensor) -> torch.FloatTensor:
     assert logits.shape[0] == labels.shape[0] 
-    # TODO: complete the function to compute the accuracy
+    # TODONE: compute the accuracy given logits and labels
     # Hint: follow the hints in the pdf description, the return should be a tensor of 0s and 1s with the same shape as labels
     # labels is a tensor of shape (batch_size,)
     # logits is a tensor of shape (batch_size, num_classes)
 
-    # Question: what is in the label vector?
-    correct = torch.zeros(labels.shape[0])
-    for i in range(logits.shape[0]):
-        if torch.argmax(logits[i]) == labels[i]:
-            correct[i] = 1
-        else:
-            correct[i] = 0
-
-    raise NotImplementedError
+    return torch.argmax(logits, dim=1) == labels
 
 
 def evaluate(model: SentimentClassifier, eval_dataloader: DataLoader) -> Tuple[float, float]:
@@ -198,7 +190,6 @@ def train(model: SentimentClassifier,
             # will explain more about it in future lectures and homework
             optimizer.zero_grad()
             inp, labels = batch
-            print(labels) #TODO: remove
             # forward pass
             logits = model(inp)
             # compute loss and backpropagate
