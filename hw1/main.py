@@ -9,7 +9,7 @@ EMBEDDING_TYPES = ["glove-twitter-50", "glove-twitter-100", "glove-twitter-200",
 def single_run(dev_d: Dict[str, List[Union[str, int]]],
                train_d: Dict[str, List[Union[str, int]]],
                test_d: Dict[str, List[Union[str, int]]]):
-    # TODO: once you have completed the model.py, you can run this function to train and evaluate your model, and visualize the training process with a plot
+    # TODONE: once you have completed the model.py, you can run this function to train and evaluate your model, and visualize the training process with a plot
     train_config = EasyDict({
         'batch_size': 64,  # we use batching for
         'lr': 0.025,  # learning rate
@@ -26,7 +26,7 @@ def single_run(dev_d: Dict[str, List[Union[str, int]]],
 def explore_embeddings(dev_d: Dict[str, List[Union[str, int]]],
                        train_d: Dict[str, List[Union[str, int]]],
                        test_d: Dict[str, List[Union[str, int]]]):
-    # TODO: once you have completed the model.py, you can run this function to initialize and train your model with different embeddings, and visualize the performance across different embeddings with two plots
+    # TODONE: once you have completed the model.py, you can run this function to initialize and train your model with different embeddings, and visualize the performance across different embeddings with two plots
     all_emb_epoch_dev_accs, all_emb_epoch_dev_losses = [], []
 
     for embedding_type in EMBEDDING_TYPES:
