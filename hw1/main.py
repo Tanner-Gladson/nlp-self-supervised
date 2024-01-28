@@ -57,8 +57,8 @@ if __name__ == '__main__':
 
     # Run a single training run
     # uncomment the following line to run
-    single_run(dev_data, train_data, test_data)
+    # single_run(dev_data, train_data, test_data)
 
     # Explore different embeddings
     # uncomment the following line to run
-    # explore_embeddings(dev_data, train_data, test_data)
+    explore_embeddings(dev_data, train_data, test_data)
