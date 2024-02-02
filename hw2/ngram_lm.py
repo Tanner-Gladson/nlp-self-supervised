@@ -83,10 +83,12 @@ def create_ngrams(data, n, splitter, tokenizer):
         # store the estimated probability of each next word
         scores = []
         for nw in next_words:
-            # TODO: compute the estimated probability of the next word given the context
+            # TODONE: compute the estimated probability of the next word given the context
             # hint: use the counters 'ngrams' and 'ngram_context' you have created above
-            raise NotImplementedError
-            # Your code ends here
+
+            ngram = tuple(list(context).append(nw))
+            score = ngrams[ngram] / ngram_context[context]
+            scores.append(score)
 
         # record the most probable next word as the prediction
         next_word_pred[context] = next_words[np.argmax(scores)]
@@ -117,9 +119,7 @@ def plot_next_word_prob(word_scores, word_candidates, context, top=10, save_path
     # - word_candidates is a dictionary with tuple of the context as keys and a list of possible next words as values (the sorted_next_word_candidates in create_ngrams function)
     # - for a given context, elements in word_scores[context] and word_candidates[context] have one-to-one correspondence
     # - context is a tuple of words
-
     
-
 
     raise NotImplementedError
     # Your code ends here
