@@ -106,11 +106,12 @@ class SentimentClassifier(nn.Module):
         # - logits is a tensor of shape (batch_size, num_classes)
         # - return a tensor of shape (batch_size, num_classes) with the softmax of the logits
         
-        c = torch.max(logits, dim=1).values #.view(-1, 1)
+        # subtract the max value from each row to avoid overflow
+        max_logits = torch.max(logits, dim=1, keepdim=True).values
+        exp_logits = torch.exp(logits - max_logits)
 
-        exponents = torch.exp(logits - c)
-        normalizer = torch.sum(exponents, dim=1) #.view(-1, 1)
-        return exponents / normalizer
+        normalizer = torch.sum(exp_logits, dim=1, keepdim=True)
+        return exp_logits / normalizer
 
     # The function that perform backward pass
     def gradient_loss(self, inp, logits, labels):
