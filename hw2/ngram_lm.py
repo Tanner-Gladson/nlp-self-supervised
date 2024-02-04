@@ -156,7 +156,7 @@ def run_ngram():
     print(f"{'-' * 10} plot the top 10 next word probabilities after {context2} {'-' * 10}")
     plot_next_word_prob(next_word_scores, next_word_candidates, context2, top=10, save_path="ngram_context2.png")
 
-    # TODO: paste the generated completion of these two prefixes to the pdf
+    # TODONE: paste the generated completion of these two prefixes to the pdf
     prefix1 = "According to the report"
     prefix2 = "The president of the association"
     completion1 = generate_text(word_pred, tokenizer, 3, prefix1, max_len=30)

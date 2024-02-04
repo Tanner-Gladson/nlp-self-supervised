@@ -8,7 +8,7 @@ EMBEDDING_TYPES = ["glove-twitter-50", "glove-twitter-100", "glove-twitter-200",
 def single_grad_descent(dev_d: Dict[str, List[Union[str, int]]],
                         train_d: Dict[str, List[Union[str, int]]],
                         test_d: Dict[str, List[Union[str, int]]]):
-    # TODO: once you have completed the gradient_descent.py, you can run this function to train and evaluate your model, and visualize the training process with a plot
+    # TODONE: once you have completed the gradient_descent.py, you can run this function to train and evaluate your model, and visualize the training process with a plot
     train_config = EasyDict({
         'batch_size': 64,  # we use batching for
         'lr': 0.05,  # learning rate

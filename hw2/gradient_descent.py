@@ -121,8 +121,15 @@ class SentimentClassifier(nn.Module):
         # - grads_weights: a tensor of shape (num_classes, embed_dim) that is the gradient of linear layer's weights
         # - grads_bias: a tensor of shape (num_classes,) that is the gradient of linear layer's bias
         # - loss: a scalar that is the cross entropy loss, averaged over the batch
-        raise NotImplementedError
-        # your code ends here
+
+        softmax_preds = SentimentClassifier.softmax(logits)
+        one_hot_labels = nn.functional.one_hot(labels, softmax_preds.shape[1])
+        assert softmax_preds[0] == one_hot_labels.shape[0]
+        assert softmax_preds[1] == one_hot_labels.shape[1]
+
+        loss = -np.sum(torch.dot(one_hot_labels, torch.log(softmax_preds))) / bsz
+        grads_bias = torch.sum(softmax_preds - one_hot_labels, dim=0) / bsz
+        grads_weights = torch.t(torch.matmul(torch.t(inp), (softmax_preds - one_hot_labels)) / bsz)
 
         return grads_weights, grads_bias, loss
 
