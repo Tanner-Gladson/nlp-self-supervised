@@ -25,7 +25,7 @@ def single_grad_descent(dev_d: Dict[str, List[Union[str, int]]],
 if __name__ == '__main__':
     # run ngram
     # uncomment the following line to run
-    run_ngram()
+    #run_ngram()
 
     # load raw data
     # uncomment the following line to run

@@ -53,12 +53,13 @@ def featurize(sentence: str, embeddings: gensim.models.keyedvectors.KeyedVectors
         except KeyError:
             pass
 
-    # TODO (Copy from your HW1): complete the function to compute the average embedding of the sentence
-    # your return should be
-    # None - if the vector sequence is empty, i.e. the sentence is empty or None of the words in the sentence is in the embedding vocabulary
-    # A torch tensor of shape (embed_dim,) - the average word embedding of the sentence
-    # Hint: follow the hints in the pdf description
-    raise NotImplementedError
+    # TODONE (Copy from your HW1): complete the function to compute the average embedding of the sentence
+    # map each word to its embedding
+    if len(vectors) == 0:
+        return None
+    
+    features = torch.tensor(data=vectors, dtype=float)
+    return torch.mean(features, dim=0)
 
 
 def create_tensor_dataset(raw_data: Dict[str, List[Union[int, str]]],
@@ -66,10 +67,11 @@ def create_tensor_dataset(raw_data: Dict[str, List[Union[int, str]]],
     all_features, all_labels = [], []
     for text, label in tqdm(zip(raw_data['text'], raw_data['label'])):
 
-        # TODO (Copy from your HW1): complete the for loop to featurize each sentence
-        # only add the feature and label to the list if the feature is not None
-        raise NotImplementedError
-        # your code ends here
+        # TODONE (Copy from your HW1): complete the for loop to featurize each sentence
+        feature = featurize(text, embeddings)
+        if feature is not None:
+            all_features.append(feature) 
+            all_labels.append(label)
 
     # stack all features and labels into two single tensors and create a TensorDataset
     features_tensor = torch.stack(all_features)
@@ -88,34 +90,33 @@ class SentimentClassifier(nn.Module):
         self.embed_dim = embed_dim
         self.num_classes = num_classes
 
-        # TODO (Copy from your HW1): define the linear layer
-        # Hint: follow the hints in the pdf description
-        raise NotImplementedError
-        # your code ends here
+        # TODONE (Copy from your HW1): define the linear layer
+        self.linear = nn.Linear(embed_dim, num_classes)
+        self.loss = nn.CrossEntropyLoss(reduction='mean')
 
     def forward(self, inp):
-
-        # TODO (Copy from your HW1): complete the forward function
-        # Hint: follow the hints in the pdf description
-        raise NotImplementedError
-        # your code ends here
-
+        # TODONE (Copy from your HW1): complete the forward function
+        logits = self.linear(inp)
         return logits
 
     @staticmethod
     def softmax(logits):
-        # TODO: complete the softmax function
+        # TODONE: complete the softmax function
         # Hint: follow the hints in the pdf description
         # - logits is a tensor of shape (batch_size, num_classes)
         # - return a tensor of shape (batch_size, num_classes) with the softmax of the logits
-        raise NotImplementedError
-        # your code ends here
+        
+        c = torch.max(logits, dim=1).values #.view(-1, 1)
+
+        exponents = torch.exp(logits - c)
+        normalizer = torch.sum(exponents, dim=1) #.view(-1, 1)
+        return exponents / normalizer
 
     # The function that perform backward pass
     def gradient_loss(self, inp, logits, labels):
         bsz = inp.shape[0]
 
-        # TODO complete the function to compute the gradients of the cross entropy loss w.r.t. the linear layer's weights and bias
+        # TODONE complete the function to compute the gradients of the cross entropy loss w.r.t. the linear layer's weights and bias
         # Hint: check the pdf description for the math formulas, and use the softmax function you implemented
         # your results should be
         # - grads_weights: a tensor of shape (num_classes, embed_dim) that is the gradient of linear layer's weights
@@ -127,7 +128,8 @@ class SentimentClassifier(nn.Module):
         assert softmax_preds[0] == one_hot_labels.shape[0]
         assert softmax_preds[1] == one_hot_labels.shape[1]
 
-        loss = -np.sum(torch.dot(one_hot_labels, torch.log(softmax_preds))) / bsz
+        EPS = 1e-8
+        loss = -np.sum(torch.dot(one_hot_labels, torch.log(softmax_preds + EPS))) / bsz
         grads_bias = torch.sum(softmax_preds - one_hot_labels, dim=0) / bsz
         grads_weights = torch.t(torch.matmul(torch.t(inp), (softmax_preds - one_hot_labels)) / bsz)
 
@@ -158,11 +160,12 @@ def test_gradient_loss(model: SentimentClassifier):
 
 def accuracy(logits: torch.FloatTensor , labels: torch.LongTensor) -> torch.FloatTensor:
     assert logits.shape[0] == labels.shape[0]
-    # TODO (Copy from your HW1): complete the function to compute the accuracy
+    # TODONE (Copy from your HW1): complete the function to compute the accuracy
     # Hint: follow the hints in the pdf description, the return should be a tensor of 0s and 1s with the same shape as labels
     # labels is a tensor of shape (batch_size,)
     # logits is a tensor of shape (batch_size, num_classes)
-    raise NotImplementedError
+    return torch.argmax(logits, dim=1) == labels
+
 
 
 def evaluate(model: SentimentClassifier, eval_dataloader: DataLoader) -> Tuple[float, float]:
@@ -208,9 +211,9 @@ def train(model: SentimentClassifier,
             # we use torch.no_grad() to disable PyTorch-built in gradient tracking and calculation, details at (https://pytorch.org/docs/stable/generated/torch.no_grad.html)
             # since we are doing gradient descent manually
             with torch.no_grad():
-                # TODO: complete the gradient descent update for the linear layer's weights and bias
-                raise NotImplementedError
-                # your code ends here
+                # TODONE: complete the gradient descent update for the linear layer's weights and bias
+                model.linear.weight = model.linear.weight - learning_rate * grads_weights
+                model.linear.bias = model.linear.bias - learning_rate * grads_bias
 
             # record the loss and accuracy
             train_losses.append(loss.item())
