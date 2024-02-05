@@ -126,8 +126,8 @@ class SentimentClassifier(nn.Module):
 
         softmax_preds = SentimentClassifier.softmax(logits)
         one_hot_labels = nn.functional.one_hot(labels, softmax_preds.shape[1])
-        assert softmax_preds[0] == one_hot_labels.shape[0]
-        assert softmax_preds[1] == one_hot_labels.shape[1]
+        assert softmax_preds.shape[0] == one_hot_labels.shape[0]
+        assert softmax_preds.shape[1] == one_hot_labels.shape[1]
 
         EPS = 1e-8
         loss = -np.sum(torch.dot(one_hot_labels, torch.log(softmax_preds + EPS))) / bsz
