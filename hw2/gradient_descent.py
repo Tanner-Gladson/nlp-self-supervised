@@ -91,7 +91,7 @@ class SentimentClassifier(nn.Module):
         self.num_classes = num_classes
 
         # TODONE (Copy from your HW1): define the linear layer
-        self.linear = nn.Linear(embed_dim, num_classes)
+        self.linear = nn.Linear(embed_dim, num_classes, dtype=float)
         self.loss = nn.CrossEntropyLoss(reduction='mean')
 
     def forward(self, inp):
@@ -130,7 +130,7 @@ class SentimentClassifier(nn.Module):
         assert softmax_preds.shape[1] == one_hot_labels.shape[1]
 
         EPS = 1e-8
-        loss = -np.sum(torch.dot(one_hot_labels, torch.log(softmax_preds + EPS))) / bsz
+        loss = -torch.sum(one_hot_labels * torch.log(softmax_preds + EPS)) / bsz
         grads_bias = torch.sum(softmax_preds - one_hot_labels, dim=0) / bsz
         grads_weights = torch.t(torch.matmul(torch.t(inp), (softmax_preds - one_hot_labels)) / bsz)
 
@@ -213,8 +213,8 @@ def train(model: SentimentClassifier,
             # since we are doing gradient descent manually
             with torch.no_grad():
                 # TODONE: complete the gradient descent update for the linear layer's weights and bias
-                model.linear.weight = model.linear.weight - learning_rate * grads_weights
-                model.linear.bias = model.linear.bias - learning_rate * grads_bias
+                model.linear.weight = nn.Parameter(model.linear.weight - learning_rate * grads_weights)
+                model.linear.bias = nn.Parameter(model.linear.bias - learning_rate * grads_bias)
 
             # record the loss and accuracy
             train_losses.append(loss.item())
