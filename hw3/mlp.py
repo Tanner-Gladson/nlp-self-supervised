@@ -36,13 +36,9 @@ def load_data_mlp() -> Tuple[
 
     # cap the train and test sets at 20k and 10k, use the first 1k examples from the train set as the dev set
     # we convert each split into a torch dataset
-    # TODO: uncomment
-    # dev_dataset = train_dataset[:5000]
-    # train_dataset = train_dataset[5000:25000]
-    # test_dataset = test_dataset[:10000]
-    dev_dataset = train_dataset[:500]
-    train_dataset = train_dataset[500:2500]
-    test_dataset = test_dataset[:1000]
+    dev_dataset = train_dataset[:5000]
+    train_dataset = train_dataset[5000:25000]
+    test_dataset = test_dataset[:10000]
 
     return dev_dataset, train_dataset, test_dataset
 

@@ -172,7 +172,7 @@ if __name__ == '__main__':
 
     # Explore different hidden dimensions
     # uncomment the following line to run
-    # explore_mlp_structures(dev_data, train_data, test_data, pretrained_embeddings)
+    explore_mlp_structures(dev_data, train_data, test_data, pretrained_embeddings)
 
     # Explore different activations
     # uncomment the following line to run
@@ -180,4 +180,4 @@ if __name__ == '__main__':
 
     # Explore different learning rates
     # uncomment the following line to run
-    #explore_mlp_learning_rates(dev_data, train_data, test_data, pretrained_embeddings)
+    explore_mlp_learning_rates(dev_data, train_data, test_data, pretrained_embeddings)
