@@ -100,7 +100,6 @@ def explore_mlp_activations(dev_d: Dict[str, List[Union[str, int]]],
                                                                               test_dataset)
         all_emb_epoch_dev_accs.append(epoch_dev_accs)
         all_emb_epoch_dev_losses.append(epoch_dev_loss)
-        visualize_epochs(epoch_train_losses, epoch_dev_loss, f"mlp_activation_{activation}_loss.png")
 
     visualize_configs(all_emb_epoch_dev_accs, activation_names, "Accuracy", "./all_mlp_activations_acc.png")
     visualize_configs(all_emb_epoch_dev_losses, activation_names, "Loss", "./all_mlp_activations_loss.png")
@@ -152,7 +151,6 @@ def explore_mlp_learning_rates(dev_d: Dict[str, List[Union[str, int]]],
                                                                               test_dataset)
         all_emb_epoch_dev_accs.append(epoch_dev_accs)
         all_emb_epoch_dev_losses.append(epoch_dev_loss)
-        visualize_epochs(epoch_train_losses, epoch_dev_loss, f"mlp_learning_rate_{learning_rate}_loss.png")
 
     visualize_configs(all_emb_epoch_dev_accs, lrs_names, "Accuracy", "./all_mlp_learning_rates_acc.png")
     visualize_configs(all_emb_epoch_dev_losses, lrs_names, "Loss", "./all_mlp_learning_rates_loss.png")
