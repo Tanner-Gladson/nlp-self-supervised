@@ -36,9 +36,13 @@ def load_data_mlp() -> Tuple[
 
     # cap the train and test sets at 20k and 10k, use the first 1k examples from the train set as the dev set
     # we convert each split into a torch dataset
-    dev_dataset = train_dataset[:5000]
-    train_dataset = train_dataset[5000:25000]
-    test_dataset = test_dataset[:10000]
+    # TODO: uncomment
+    # dev_dataset = train_dataset[:5000]
+    # train_dataset = train_dataset[5000:25000]
+    # test_dataset = test_dataset[:10000]
+    dev_dataset = train_dataset[:50]
+    train_dataset = train_dataset[50:250]
+    test_dataset = test_dataset[:100]
 
     return dev_dataset, train_dataset, test_dataset
 
@@ -53,12 +57,12 @@ def featurize(sentence: str, embeddings: gensim.models.keyedvectors.KeyedVectors
         except KeyError:
             pass
 
-    # TODO (Copy from your HW1): complete the function to compute the average embedding of the sentence
-    # your return should be
-    # None - if the vector sequence is empty, i.e. the sentence is empty or None of the words in the sentence is in the embedding vocabulary
-    # A torch tensor of shape (embed_dim,) - the average word embedding of the sentence
-    # Hint: follow the hints in the pdf description
-    raise NotImplementedError
+    # TODONE (Copy from your HW1): complete the function to compute the average embedding of the sentence
+    if len(vectors) == 0:
+        return None
+    
+    features = torch.tensor(data=vectors, dtype=float)
+    return torch.mean(features, dim=0)
 
 
 def create_tensor_dataset(raw_data: Dict[str, List[Union[int, str]]],
@@ -66,10 +70,11 @@ def create_tensor_dataset(raw_data: Dict[str, List[Union[int, str]]],
     all_features, all_labels = [], []
     for text, label in tqdm(zip(raw_data['text'], raw_data['label'])):
 
-        # TODO (Copy from your HW1): complete the for loop to featurize each sentence
-        # only add the feature and label to the list if the feature is not None
-        raise NotImplementedError
-        # your code ends here
+        # TODONE (Copy from your HW1): complete the for loop to featurize each sentence
+        feature = featurize(text, embeddings)
+        if feature is not None:
+            all_features.append(feature) 
+            all_labels.append(label)
 
     # stack all features and labels into two single tensors and create a TensorDataset
     features_tensor = torch.stack(all_features)
@@ -87,46 +92,45 @@ class SentimentClassifier(nn.Module):
         self.embed_dim = embed_dim
         self.num_classes = num_classes
 
-        # TODO: define the activation functions
-        # activation function
+        # TODONE: define the activation functions
         if activation == 'Sigmoid':
             self.activation = nn.Sigmoid()
+        elif activation == "ReLU":
+            self.activation = nn.ReLU()
+        elif activation == "Tanh":
+            self.activation = nn.Tanh()
+        elif activation == "GeLU":
+            self.activation = nn.GELU()
         else:
             raise NotImplementedError
 
-        # linear layers for the MLP
-        self.linears = nn.ModuleList()
-        # TODO: define the MLP given the hidden dimensions
-        # - embed_dim is the dimension of the word embeddings (input to the MLP)
-        # - num_classes is the number of classes (output of the MLP)
-        # - hidden_dims is a list of integers, where each integer is the dimension of a hidden layer in the MLP
-        # - The linear layers should have the following dimensions:
-        #       [embed_dim, hidden_dims[0]], [hidden_dims[0], hidden_dims[1]], ..., [hidden_dims[-1], num_classes]
-        # Hint:
-        # - Remember to consider the case when there are no hidden layers (i.e. hidden_dims is an empty list)
-        #       in this case, it essentially degrades to the architecture we used in hw 1
-        raise NotImplementedError
-        # your code ends here
+        # TODONE: define the MLP given the hidden dimensions
+        dims = [embed_dim] + hidden_dims + [num_classes]
+        num_layers = len(dims) - 1
+        layers = [nn.Linear(dims[i], dims[i+1]) for i in range(0, num_layers)]
+        self.linears = nn.ModuleList(layers)
 
         self.loss = nn.CrossEntropyLoss(reduction='mean')
 
     def forward(self, inp):
 
-        # TODO: complete the forward function
+        # TODONE: complete the forward function
         # Hint remember to apply the activation function to all hidden layers except the last one
-        raise NotImplementedError
-        # your code ends here
-
+        num_layers = len(self.linears)
+        for i in range(0, num_layers - 1):
+            inp = self.activation(self.linears[i](inp))
+        
+        logits = self.linears[num_layers - 1](inp)
         return logits
 
 
 def accuracy(logits: torch.FloatTensor, labels: torch.LongTensor) -> torch.FloatTensor:
     assert logits.shape[0] == labels.shape[0]
-    # TODO (Copy from your HW1): complete the function to compute the accuracy
+    # TODONE (Copy from your HW1): complete the function to compute the accuracy
     # Hint: follow the hints in the pdf description, the return should be a tensor of 0s and 1s with the same shape as labels
     # labels is a tensor of shape (batch_size,)
     # logits is a tensor of shape (batch_size, num_classes)
-    raise NotImplementedError
+    return torch.argmax(logits, dim=1) == labels
 
 
 def evaluate(model: SentimentClassifier, eval_dataloader: DataLoader) -> Tuple[float, float]:
