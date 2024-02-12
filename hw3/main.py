@@ -40,6 +40,8 @@ def explore_mlp_structures(dev_d: Dict[str, List[Union[str, int]]],
             'activation': activation,  # non-linear activation function
         })
 
+        print("creating model with hidden dimensions: ", hd)
+
         epoch_train_losses, _, epoch_dev_loss, epoch_dev_accs, _, _ = run_mlp(train_config, embeddings, dev_dataset,
                                                                               train_dataset,
                                                                               test_dataset)

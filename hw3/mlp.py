@@ -107,10 +107,11 @@ class SentimentClassifier(nn.Module):
         # TODONE: define the MLP given the hidden dimensions
         dims = [embed_dim] + hidden_dims + [num_classes]
         num_layers = len(dims) - 1
-        layers = [nn.Linear(dims[i], dims[i+1]) for i in range(0, num_layers)]
+        layers = [nn.Linear(dims[i], dims[i+1], dtype=torch.double)for i in range(0, num_layers)]
         self.linears = nn.ModuleList(layers)
 
         self.loss = nn.CrossEntropyLoss(reduction='mean')
+        
 
     def forward(self, inp):
 
