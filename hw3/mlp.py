@@ -40,9 +40,9 @@ def load_data_mlp() -> Tuple[
     # dev_dataset = train_dataset[:5000]
     # train_dataset = train_dataset[5000:25000]
     # test_dataset = test_dataset[:10000]
-    dev_dataset = train_dataset[:50]
-    train_dataset = train_dataset[50:250]
-    test_dataset = test_dataset[:100]
+    dev_dataset = train_dataset[:500]
+    train_dataset = train_dataset[500:2500]
+    test_dataset = test_dataset[:1000]
 
     return dev_dataset, train_dataset, test_dataset
 
