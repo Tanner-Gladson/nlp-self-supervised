@@ -87,7 +87,6 @@ class NPLMFirstBlock(nn.Module):
         # TODONE: implement the forward pass
         # looking up the word embeddings from self.embeddings()
         # And concatenating them
-        # Note this is done for a batch of instances. TODO: What does this mean?
 
         # I need a function that will take in a single input and return the embeddings
         # Then I can concatenate the embeddings
@@ -115,12 +114,11 @@ class NPLMBlock(nn.Module):
 
     def forward(self, inputs):
         # TODONE: implement the forward pass
-        raise NotImplementedError
         # apply linear transformation and tanh activation
         output = F.tanh(self.linear(inputs))
 
-        # TODO: HOW?? add residual connection
-
+        # TODO: Do I just add without scaling?
+        output = output + inputs
         # apply layer normalization
         output = self.layer_norm(output)
 
@@ -140,7 +138,7 @@ class NPLMFinalBlock(nn.Module):
         # apply linear transformation
         # apply log_softmax to get log-probabilities (logits)
         output = self.linear(inputs)
-        log_probs = F.log_softmax(output)
+        log_probs = F.log_softmax(output, dim=-1)
         return log_probs
 
 
@@ -161,10 +159,8 @@ class NPLM(nn.Module):
 
     def forward(self, inputs):
         # TODONE: implement the forward pass
-        # input layer
-
-        # multiple middle layers
         # remember to apply the ReLU activation function after each layer
+        inputs = self.first_layer(inputs)
         for layer in self.intermediate_layers:
             inputs = F.relu((layer(inputs)))
 
@@ -213,7 +209,7 @@ def train(model, train_dataloader, dev_dataloader, criterion, optimizer, schedul
             # TODONE extract perplexity
             # remember the connection between perplexity and cross-entropy loss
             # name the perplexity result as 'ppl'
-            ppl = torch.exp(loss, 2)
+            ppl = torch.exp(loss)
             # your code ends here
 
             # backward pass and update gradient
@@ -261,7 +257,7 @@ def evaluate(model, eval_dataloader, criterion):
             count += 1
     avg_loss = loss / count
     # TODONE: compute perplexity
-    avg_ppl = torch.exp(avg_loss, 2)
+    avg_ppl = 2**avg_loss
     # your code ends here
     return avg_loss, avg_ppl
 
@@ -319,8 +315,9 @@ def run_mlp_lm(config, train_data, dev_data):
 
     # preprocess data
     print(f"{'-' * 10} Preprocess Data {'-' * 10}")
-    train_dataset = preprocess_data(train_data[-100000:], config.local_window_size, splitter, tokenizer)
-    dev_dataset = preprocess_data(dev_data, config.local_window_size, splitter, tokenizer)
+    # TODO uncomment: train_dataset = preprocess_data(train_data[-100000:], config.local_window_size, splitter, tokenizer)
+    train_dataset = preprocess_data(train_data[-10000:], config.local_window_size, splitter, tokenizer)
+    dev_dataset = preprocess_data(dev_data[-5000:], config.local_window_size, splitter, tokenizer)
 
     # create dataloaders
     print(f"{'-' * 10} Create Dataloader {'-' * 10}")
