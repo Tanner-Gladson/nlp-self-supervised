@@ -53,10 +53,12 @@ def preprocess_data(data, local_window_size, splitter, tokenizer):
                     # have already traversed all of the sentence
                     break
 
-                # TODO: Select a subset of token_ids from idx -> idx + local_window_size as input and put it to x
+                # TODONE: Select a subset of token_ids from idx -> idx + local_window_size as input and put it to x
                 # Select a subset of token_ids from idx -> idx + local_window_size as input and put it to x: list of context token_ids
                 # Then select the word immediately after this window as output and put it to y: the target next token_id
-                raise NotImplementedError
+
+                x = token_ids[idx:idx + local_window_size] # TODO: does this need to be a tuple?
+                y = token_ids[idx + local_window_size]
                 # your code ends here
 
                 x_data.append(x)
@@ -82,24 +84,24 @@ class NPLMFirstBlock(nn.Module):
         self.dropout = nn.Dropout(dropout_p)
 
     def forward(self, inputs):
-        # TODO: implement the forward pass
-        raise NotImplementedError
+        # TODONE: implement the forward pass
         # looking up the word embeddings from self.embeddings()
         # And concatenating them
-        # Note this is done for a batch of instances.
+        # Note this is done for a batch of instances. TODO: What does this mean?
 
+        # I need a function that will take in a single input and return the embeddings
+        # Then I can concatenate the embeddings
+        embeddings = self.embeddings(inputs)
+        embeddings = embeddings.view(embeddings.size(0), -1)
 
         # Transform embeddings with a linear layer and tanh activation
-
+        transformed_embeddings = F.tanh(self.linear(embeddings))
 
         # apply layer normalization
+        final_embeds = self.layer_norm(transformed_embeddings)
 
-
-        # apply dropout
-
-        # your code ends here
-
-        return final_embeds
+        # apply dropout TODO: why do we apply dropout to the final embeddings?
+        return self.dropout(final_embeds)
 
 
 class NPLMBlock(nn.Module):
@@ -112,21 +114,18 @@ class NPLMBlock(nn.Module):
         self.dropout = nn.Dropout(dropout_p)
 
     def forward(self, inputs):
-        # TODO: implement the forward pass
+        # TODONE: implement the forward pass
         raise NotImplementedError
         # apply linear transformation and tanh activation
+        output = F.tanh(self.linear(inputs))
 
-
-        # add residual connection
-
+        # TODO: HOW?? add residual connection
 
         # apply layer normalization
-
+        output = self.layer_norm(output)
 
         # apply dropout
-
-        # your code ends here
-
+        final_inputs = self.dropout(output)
         return final_inputs
 
 
@@ -137,14 +136,11 @@ class NPLMFinalBlock(nn.Module):
         self.linear = nn.Linear(hidden_dim, vocab_size, bias=False)
 
     def forward(self, inputs):
-        # TODO: implement the forward pass
-        raise NotImplementedError
+        # TODONE: implement the forward pass
         # apply linear transformation
-
         # apply log_softmax to get log-probabilities (logits)
-
-        # your code ends here
-
+        output = self.linear(inputs)
+        log_probs = F.log_softmax(output)
         return log_probs
 
 
@@ -156,26 +152,24 @@ class NPLM(nn.Module):
 
         self.intermediate_layers = nn.ModuleList()
 
-        # TODO: create num_blocks of NPLMBlock as intermediate layers
+        # TODONE: create num_blocks of NPLMBlock as intermediate layers
         # append them to self.intermediate_layers
-        raise NotImplementedError
-
-        # your code ends here
+        for _ in range(num_blocks):
+            self.intermediate_layers.append(NPLMBlock(hidden_dim, dropout_p))
 
         self.final_layer = NPLMFinalBlock(vocab_size, hidden_dim)
 
     def forward(self, inputs):
-        # TODO: implement the forward pass
-        raise NotImplementedError
+        # TODONE: implement the forward pass
         # input layer
 
         # multiple middle layers
         # remember to apply the ReLU activation function after each layer
+        for layer in self.intermediate_layers:
+            inputs = F.relu((layer(inputs)))
 
         # output layer
-
-        # your code ends here
-
+        log_probs = self.final_layer(inputs)
         return log_probs
 
 
@@ -216,10 +210,10 @@ def train(model, train_dataloader, dev_dataloader, criterion, optimizer, schedul
             # compute loss function
             loss = criterion(log_probs, target)
 
-            # TODO extract perplexity
+            # TODONE extract perplexity
             # remember the connection between perplexity and cross-entropy loss
             # name the perplexity result as 'ppl'
-            raise NotImplementedError
+            ppl = torch.exp(loss, 2)
             # your code ends here
 
             # backward pass and update gradient
@@ -266,9 +260,8 @@ def evaluate(model, eval_dataloader, criterion):
             loss += criterion(log_probs, target).item()
             count += 1
     avg_loss = loss / count
-    # TODO: compute perplexity
-    # name the perplexity result as 'avg_ppl'
-    raise NotImplementedError
+    # TODONE: compute perplexity
+    avg_ppl = torch.exp(avg_loss, 2)
     # your code ends here
     return avg_loss, avg_ppl
 

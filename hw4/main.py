@@ -49,7 +49,7 @@ if __name__ == '__main__':
 
     # Run BPE on the wikitext dataset
     # uncomment the following line to run
-    # bpe_on_wikitext()
+    bpe_on_wikitext()
 
     # load raw data for lm
     # uncomment the following line to run
