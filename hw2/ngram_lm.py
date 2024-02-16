@@ -64,6 +64,9 @@ def create_ngrams(data, n, splitter, tokenizer):
                 # - 'next_word_candidates' is a dictionary with tuple of the context
                 #   (i.e. the (n-1)-grams) as keys and a set of possible next words as values
 
+                if (tuple(tokens[idx:idx + n - 1]) == None) :
+                    print("WARNING: we have a context which is None")
+
                 ngrams[tuple(tokens[idx:idx + n])] += 1
                 ngram_context[tuple(tokens[idx:idx + n - 1])] += 1
                 next_word_candidates[tuple(tokens[idx:idx + n - 1])].add(tokens[idx + n -1])
@@ -86,8 +89,10 @@ def create_ngrams(data, n, splitter, tokenizer):
             # TODONE: compute the estimated probability of the next word given the context
             # hint: use the counters 'ngrams' and 'ngram_context' you have created above
 
-            ngram = tuple(list(context).append(nw))
-            score = ngrams[ngram] / ngram_context[context]
+            ngram_as_list = list(context)
+            ngram_as_list.append(nw)
+            ngram_as_tuple = tuple(ngram_as_list)
+            score = ngrams[ngram_as_tuple] / ngram_context[context]
             scores.append(score)
 
         # record the most probable next word as the prediction
@@ -131,7 +136,8 @@ def plot_next_word_prob(word_scores, word_candidates, context, top=10, save_path
     top_scores = scores[indices_of_largest]
     top_candidates = [candidates[i] for i in indices_of_largest]
 
-    # Plot the top candidates and their scores using matplotlib
+    # Plot the top candidates and their scores using For bomatplotlib
+    plt.figure(figsize=(16, 8))  # We need big figure
     plt.bar(top_candidates, top_scores)
     plt.xlabel('Next Word')
     plt.ylabel('Probability')
