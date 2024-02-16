@@ -12,7 +12,7 @@ def single_grad_descent(dev_d: Dict[str, List[Union[str, int]]],
     train_config = EasyDict({
         'batch_size': 64,  # we use batching for
         'lr': 0.05,  # learning rate
-        'num_epochs': 50,  # the total number of times all the training data is iterated over
+        'num_epochs': 100,  # the total number of times all the training data is iterated over
         'save_path': 'model.pth',  # path where to save the model
         'embeddings': EMBEDDING_TYPES[0],
         'num_classes': 2,
