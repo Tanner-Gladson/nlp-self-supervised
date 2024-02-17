@@ -57,7 +57,7 @@ def preprocess_data(data, local_window_size, splitter, tokenizer):
                 # Select a subset of token_ids from idx -> idx + local_window_size as input and put it to x: list of context token_ids
                 # Then select the word immediately after this window as output and put it to y: the target next token_id
 
-                x = token_ids[idx:idx + local_window_size] # TODO: does this need to be a tuple?
+                x = token_ids[idx:idx + local_window_size]
                 y = token_ids[idx + local_window_size]
                 # your code ends here
 
@@ -94,13 +94,13 @@ class NPLMFirstBlock(nn.Module):
         embeddings = embeddings.view(embeddings.size(0), -1)
 
         # Transform embeddings with a linear layer and tanh activation
-        transformed_embeddings = F.tanh(self.linear(embeddings))
+        embeddings = F.tanh(self.linear(embeddings))
 
         # apply layer normalization
-        final_embeds = self.layer_norm(transformed_embeddings)
+        embeddings = self.layer_norm(embeddings)
 
         # apply dropout TODO: why do we apply dropout to the final embeddings?
-        return self.dropout(final_embeds)
+        return self.dropout(embeddings)
 
 
 class NPLMBlock(nn.Module):
@@ -117,14 +117,13 @@ class NPLMBlock(nn.Module):
         # apply linear transformation and tanh activation
         output = F.tanh(self.linear(inputs))
 
-        # TODO: Do I just add without scaling?
         output = output + inputs
         # apply layer normalization
         output = self.layer_norm(output)
 
         # apply dropout
-        final_inputs = self.dropout(output)
-        return final_inputs
+        output = self.dropout(output)
+        return output
 
 
 class NPLMFinalBlock(nn.Module):
@@ -354,7 +353,7 @@ def sample_from_mlp_lm(config, dev_data):
     model = NPLM(tokenizer.vocab_size, config.embed_dim, config.local_window_size, config.hidden_dim, config.num_blocks,
                  config.dropout_p)
     print(f"{'-' * 10} Load Model Weights {'-' * 10}")
-    model.load_state_dict(torch.load(config.save_path))
+    model.load_state_dict(torch.load(config.save_path, map_location=torch.device('cpu')))
     model.eval()
 
     print(f"{'-' * 10} Evaluate on the Dev Set {'-' * 10}")
