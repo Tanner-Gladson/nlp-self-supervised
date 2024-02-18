@@ -208,7 +208,7 @@ def train(model, train_dataloader, dev_dataloader, criterion, optimizer, schedul
             # TODONE extract perplexity
             # remember the connection between perplexity and cross-entropy loss
             # name the perplexity result as 'ppl'
-            ppl = 2**loss.item()
+            ppl = torch.exp(loss)
             # your code ends here
 
             # backward pass and update gradient
