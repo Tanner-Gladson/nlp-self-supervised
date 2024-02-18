@@ -91,7 +91,7 @@ class NPLMFirstBlock(nn.Module):
         # I need a function that will take in a single input and return the embeddings
         # Then I can concatenate the embeddings
         embeddings = self.embeddings(inputs)
-        embeddings = embeddings.view(embeddings.size(0), -1)
+        embeddings = embeddings.view(-1, self.local_window_size * self.embed_dim)
 
         # Transform embeddings with a linear layer and tanh activation
         embeddings = F.tanh(self.linear(embeddings))
@@ -208,7 +208,7 @@ def train(model, train_dataloader, dev_dataloader, criterion, optimizer, schedul
             # TODONE extract perplexity
             # remember the connection between perplexity and cross-entropy loss
             # name the perplexity result as 'ppl'
-            ppl = torch.exp(loss)
+            ppl = 2**loss.item()
             # your code ends here
 
             # backward pass and update gradient
