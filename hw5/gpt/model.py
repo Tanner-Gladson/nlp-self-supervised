@@ -36,15 +36,13 @@ class CausalSelfAttention(nn.Module):
         self.attn_dropout = nn.Dropout(config.attn_pdrop)
         self.resid_dropout = nn.Dropout(config.resid_pdrop)
 
-        # TODO: create a causal mask for attention matrix of shape [config.block_size, config.block_size] (config.block_size is the maximum sequence length)
+        # TODONE: create a causal mask for attention matrix of shape [config.block_size, config.block_size] (config.block_size is the maximum sequence length)
         #   The matrix should has 1s in the lower left triangular part (including the diagonal) and 0s in the upper right.
         #   Name the matrix `causal_mask`
-        # Hint: you can check torch.tril for creating the matrix with the help of torch.ones.
-        raise NotImplementedError
-        # your code ends here
+        casual_mask = torch.ones(config.block_size, config.block_size).tril()
 
         # expand the mask for the batch and head dimensions
-        casual_mask = casual_mask.view(1, 1, config.block_size, config.block_size)
+        casual_mask = casual_mask.view(1, 1, config.block_size, config.block_size) # 
         # register the mask as a buffer so it's not updated as a model parameter
         # but can still be used in the forward pass & saved to the state_dict
         self.register_buffer("causal_mask", casual_mask)
@@ -65,11 +63,14 @@ class CausalSelfAttention(nn.Module):
         # - splitting the n_embd dimension into [n_head, n_embd / n_head]
         # - transpose the result so that move n_head forward to be the batch dimension
         # we provide the implementation for the key projections as an example
-        k = k.view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, n_head, T, n_embd / n_head)
+        k = k.view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, n_head, T, n_embd / n_head) #TODO: These commented dimensions aren't correct?
         # similarly, implement the query and value projections
+        q = q.view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, n_head, T, n_embd / n_head)
+        v = v.view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, n_head, T, n_embd / n_head)
+
         raise NotImplementedError
 
-        # causal self-attention; Self-attend: (B, n_head, T, n_embd / n_head) x (B, n_head, n_embd / n_head, T) -> (B, n_head, T, T)
+        # causal self-attention; Self-attend: (`B`, n_head, T, n_embd / n_head) x (B, n_head, n_embd / n_head, T) -> (B, n_head, T, T)
         # calculate the scaled dot-product attention with causal mask, name the attention matrix as `att`
         # step 1: q @ k^T / sqrt(d_k), where d_k is the head hidden dimension (n_embd / n_head)
 
