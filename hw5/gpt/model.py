@@ -52,7 +52,7 @@ class CausalSelfAttention(nn.Module):
     def forward(self, x):
         B, T, C = x.size() # batch size, sequence length, embedding dimensionality (n_embd)
 
-        # TODO: implement the forward pass of the casual self-attention layer.
+        # TODONE: implement the forward pass of the casual self-attention layer.
         # project the input to key, query, value vectors
         # each of shape (B, T, n_embd)
         q, k ,v  = self.c_attn(x).split(self.n_embd, dim=2)
@@ -62,32 +62,39 @@ class CausalSelfAttention(nn.Module):
         # this involves:
         # - splitting the n_embd dimension into [n_head, n_embd / n_head]
         # - transpose the result so that move n_head forward to be the batch dimension
-        # we provide the implementation for the key projections as an example
-        k = k.view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, n_head, T, n_embd / n_head) #TODO: These commented dimensions aren't correct?
-        # similarly, implement the query and value projections
-        q = q.view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, n_head, T, n_embd / n_head)
-        v = v.view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, n_head, T, n_embd / n_head)
 
-        raise NotImplementedError
+        # we provide the implementation for the key projections as an example
+        k = k.view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, n_head, T, n_embd / n_head)
+        # similarly, implement the query
+        q = q.view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, n_head, T, n_embd / n_head)
+        # set up value projections
+        v = v.view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, n_head, T, n_embd / n_head)
 
         # causal self-attention; Self-attend: (`B`, n_head, T, n_embd / n_head) x (B, n_head, n_embd / n_head, T) -> (B, n_head, T, T)
         # calculate the scaled dot-product attention with causal mask, name the attention matrix as `att`
         # step 1: q @ k^T / sqrt(d_k), where d_k is the head hidden dimension (n_embd / n_head)
+        self_attend = q @ k.transpose(-2, -1) / math.sqrt(C // self.n_head)
 
         # step 2: apply the causal mask to the attention matrix
         # the masked out entries in att should have the value of float('-inf')
         # hints:
         # - you can use the causal mask you created in the __init__ function, by accessing it as `self.causal_mask`
-        # - don't forget to truncate the mask to the actual sequence length (T)
+        # - don't forget to truncate the mask to the actual sequence length (T) # For each sequence, we resize the mask instead of padding!
         # - to apply the mask, one possible way is the `torch.Tensor.masked_fill` method
         # - - for this, you can obtain the boolean mask by element-wise comparison of the causal mask with 0
+        self_attened = self_attend.masked_fill(self.causal_mask[:, :, :T, :T] == 0, float('-inf'))
 
         # step 3: apply the softmax function to the masked attention matrix
         # hint: you can use the `F.softmax` function
+        self_attened = F.softmax(self_attend, dim=3) # Last dimension, maybe use -1 instead?
 
         # step 4: apply the attention dropout (self.attn_dropout) to the attention matrix
+        self_attened = self.attn_dropout(self_attened)
 
         # step 5: multiply the attention matrix with value vectors
+        # I think this will be like (B, n_head, T, T) x (B, n_head, T, n_embd / n_head) -> (B, n_head, T, n_embd / n_head)
+        # Why is the n_embd the size outputted by all the heads? Doesn't seem the most intuitive
+        y = self_attened @ v 
 
         # your code ends here
 
@@ -116,6 +123,8 @@ class Block(nn.Module):
 
     def forward(self, x):
         x = x + self.attn(self.ln_1(x))
+
+        # Oh interesting. The input into our mlpf is actually the embedding vectors plus the attention hidden embedding.
         x = x + self.mlpf(self.ln_2(x))
         return x
 
