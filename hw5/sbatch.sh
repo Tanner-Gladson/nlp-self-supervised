@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH -A cs601471
+#SBATCH -A cs601
 #SBATCH --partition=mig_class
 #SBATCH --gres=gpu:1
 #SBATCH --nodes=1
