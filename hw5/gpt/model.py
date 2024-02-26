@@ -86,7 +86,7 @@ class CausalSelfAttention(nn.Module):
 
         # step 3: apply the softmax function to the masked attention matrix
         # hint: you can use the `F.softmax` function
-        self_attened = F.softmax(self_attend, dim=3) # Last dimension, maybe use -1 instead?
+        self_attened = F.softmax(self_attend, dim=-1)
 
         # step 4: apply the attention dropout (self.attn_dropout) to the attention matrix
         self_attened = self.attn_dropout(self_attened)
@@ -97,7 +97,6 @@ class CausalSelfAttention(nn.Module):
         y = self_attened @ v 
 
         # your code ends here
-
         y = y.transpose(1, 2).contiguous().view(B, T, C) # re-assemble all head outputs side by side
 
         # output projection
