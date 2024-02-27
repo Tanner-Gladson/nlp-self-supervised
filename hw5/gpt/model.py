@@ -39,7 +39,7 @@ class CausalSelfAttention(nn.Module):
         # TODONE: create a causal mask for attention matrix of shape [config.block_size, config.block_size] (config.block_size is the maximum sequence length)
         #   The matrix should has 1s in the lower left triangular part (including the diagonal) and 0s in the upper right.
         #   Name the matrix `causal_mask`
-        casual_mask = torch.ones(config.block_size, config.block_size, dtype=torch.int).tril()
+        casual_mask = torch.tril(torch.ones(config.block_size, config.block_size, dtype=torch.int))
 
         # expand the mask for the batch and head dimensions
         casual_mask = casual_mask.view(1, 1, config.block_size, config.block_size) # 
