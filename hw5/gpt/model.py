@@ -73,7 +73,7 @@ class CausalSelfAttention(nn.Module):
         # causal self-attention; Self-attend: (`B`, n_head, T, n_embd / n_head) x (B, n_head, n_embd / n_head, T) -> (B, n_head, T, T)
         # calculate the scaled dot-product attention with causal mask, name the attention matrix as `att`
         # step 1: q @ k^T / sqrt(d_k), where d_k is the head hidden dimension (n_embd / n_head)
-        self_attend = q @ k.transpose(2, 3) / math.sqrt(C // self.n_head)
+        self_attend = (q @ k.transpose(2, 3)) / math.sqrt(C // self.n_head)
 
         # step 2: apply the causal mask to the attention matrix
         # the masked out entries in att should have the value of float('-inf')
