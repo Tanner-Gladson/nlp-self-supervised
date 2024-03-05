@@ -93,7 +93,6 @@ def evaluate_model(model, dataloader, device):
     # iterate over the dataloader
     for batch in dataloader:
         # TODONE: implement the evaluation function
-        raise NotImplementedError("You need to implement the evaluation function")
         # get the input_ids, attention_mask from the batch and put them on the device
         # Hints:
         # - see the getitem function in the BoolQADataset class for how to access the input_ids and attention_mask
