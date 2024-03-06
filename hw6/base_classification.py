@@ -185,7 +185,7 @@ def train(mymodel, num_epochs, train_dataloader, validation_dataloader, test_dat
             output = mymodel(input_ids=input_ids, attention_mask=attention_mask)
 
             # compute the loss using the loss function
-            my_loss = loss(output.logits, labels)
+            my_loss = loss(output['logits'], labels)
 
             # loss backward
             my_loss.backward()
@@ -196,6 +196,7 @@ def train(mymodel, num_epochs, train_dataloader, validation_dataloader, test_dat
             # zero the gradients
             mymodel.zero_grad(set_to_none=True)
 
+            predictions = output['logits']
             # your code ends here
 
             predictions = torch.argmax(predictions, dim=1)

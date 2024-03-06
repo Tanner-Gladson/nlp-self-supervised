@@ -26,3 +26,6 @@ You can create your own sbatch scripts to run the code.
 
 ### Submission
 Please follow the instructions in the homework pdf.
+
+
+python base_classification.py --small_subset --device cpu --model "distilbert-base-uncased" --batch_size "64" --lr 1e-4 --num_epochs 20 

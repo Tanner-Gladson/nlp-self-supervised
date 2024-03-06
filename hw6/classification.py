@@ -175,13 +175,17 @@ def evaluate_model(model, dataloader, device):
 
     # iterate over the dataloader
     for batch in dataloader:
-        # TODO: implement the evaluation function
-        raise NotImplementedError("You need to implement the evaluation function")
+        # TODONE: implement the evaluation function
         # get the input_ids, attention_mask from the batch and put them on the device
         # Hints:
         # - see the getitem function in the BoolQADataset class for how to access the input_ids and attention_mask
         # - use to() to move the tensors to the device
+        input_ids = batch['input_ids'].to(device)
+        attention_mask = batch['attention_mask'].to(device)
 
+        # forward pass
+        # name the output as `output`
+        output = model(input_ids=input_ids, attention_mask=attention_mask)
 
 
         # forward pass
