@@ -25,7 +25,7 @@ def print_gpu_memory():
         p = subprocess.check_output('nvidia-smi')
         print(p.decode("utf-8"))
 
-
+'''Iteratable dataset wrapper'''
 class BoolQADataset(torch.utils.data.Dataset):
     """
     Dataset for the dataset of BoolQ questions and answers
@@ -75,7 +75,7 @@ class BoolQADataset(torch.utils.data.Dataset):
             'labels': torch.tensor(answer, dtype=torch.long)  # labels are the answers (yes/no)
         }
 
-
+'''Evaluate accuracy of model on ... dataset'''
 def evaluate_model(model, dataloader, device):
     """ Evaluate a PyTorch Model
     :param torch.nn.Module model: the model to be evaluated
@@ -113,7 +113,7 @@ def evaluate_model(model, dataloader, device):
     # compute and return metrics
     return dev_accuracy.compute()
 
-
+'''Train the model and save graph images'''
 def train(mymodel, num_epochs, train_dataloader, validation_dataloader, test_dataloder, device, lr, small_subset=False):
     """ Train a PyTorch Module
 
@@ -229,6 +229,7 @@ def train(mymodel, num_epochs, train_dataloader, validation_dataloader, test_dat
     save_path = "overfit.png" if small_subset else "base_full.png"
     plt.savefig(save_path)
 
+'''Tokenize and prepare dataloaders'''
 def pre_process(model_name, batch_size, device, small_subset):
     # download dataset
     print("Loading the dataset ...")

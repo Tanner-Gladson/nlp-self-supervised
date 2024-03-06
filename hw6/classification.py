@@ -18,6 +18,7 @@ import time
 from transformers import BertConfig
 from transformers.models.bert.modeling_bert import BertEmbeddings
 
+'''Model which will only update the weights of the head, prefix, or full model as specified by the type'''
 class CustomModelforSequenceClassification(nn.Module):
 
     def __init__(self, model_name, num_labels=2, type="full"):
@@ -31,23 +32,37 @@ class CustomModelforSequenceClassification(nn.Module):
     def forward(self, input_ids, attention_mask):
         
         if self.type == "full":
-            # TODO: implement the forward function for the full model
-            raise NotImplementedError("You need to implement the forward function for the full model")
+            # TODONE: implement the forward function for the full model
 
             # pass the input_ids and attention_mask into the model to get the output object (you can name it `output`)
+            output = self.model(input_ids=input_ids, attention_mask=attention_mask)
 
             # get the last hidden state from the output object using `.last_hidden_state`
+            last_hidden_state = output.last_hidden_state
 
             # take the mean of the last hidden state along the sequence length dimension
+            means = torch.mean(last_hidden_state, dim=1) # TODO: Which dimension?
 
             # pass the mean into the self.classifier to get the logits
+            logits = self.classifier(means)
 
             # your code ends here
 
         elif self.type == "head":
-            # TODO: implement the forward function for the head-tuned model
             raise NotImplementedError("You need to implement the forward function for the head-tuned model")
             # Hint: it should be the same as the full model
+        
+            # pass the input_ids and attention_mask into the model to get the output object (you can name it `output`)
+            output = self.model(input_ids=input_ids, attention_mask=attention_mask)
+
+            # get the last hidden state from the output object using `.last_hidden_state`
+            last_hidden_state = output.last_hidden_state
+
+            # take the mean of the last hidden state along the sequence length dimension
+            means = torch.mean(last_hidden_state, dim=1) # TODO: Which dimension?
+
+            # pass the mean into the self.classifier to get the logits
+            logits = self.classifier(means)
 
             # your code ends here
         
@@ -58,42 +73,53 @@ class CustomModelforSequenceClassification(nn.Module):
 
             # the prefix is at self.prefix, but this is only one prefix, we want to append it to each instance in a batch
             # we make multiple copies of self.prefix here. the number of copies = batch size
-
-
+            batch_size = input_ids.shape[0]
+            prefixes = self.prefix.expand(batch_size, -1, -1)
             
-            # concatentate the input embeddings and our prefix, make sure to put them into our gpu
             # get the input embeddings
             # Hint: you can use self.model.embeddings.word_embeddings to get the input embeddings
+            prefix_embeddings = self.model.embeddings.word_embeddings(prefixes)
+            input_embeddings = self.model.embeddings.word_embeddings(input_ids)
 
             # concatenate the input embeddings and the prefix
             # Hint: check torch.cat for how to concatenate the tensors
+            concat_embeddings = torch.cat((prefix_embeddings, input_embeddings), dim=1)
 
             # move the input embeddings to the gpu
             # Hint: use .to(device='cuda') to move the tensor to the gpu
             # name the final tensor as `inputs_embeds`
+            inputs_embeds = concat_embeddings.to(device='cuda')
 
             
             # modify attention mask
             # we need to add the prefix to the attention mask
             # the mask on the prefix should be 1, with the dimension of (batch_size, prefix_length)
             # name the final attention mask as `attention_mask`
-
+            prepended_mask = torch.ones(batch_size, prefix_length)
+            attention_mask = torch.cat((prepended_mask, attention_mask), dim=1)
 
 
             # pass the input embeddings and the attention mask into the model
             # you can do this by passing a keyword argument "inputs_embeds" to model.forward
-
+            output = self.model(input_embeds=inputs_embeds, attention_mask=attention_mask)
             # your code ends here
 
             # get the last hidden state from the output object, take the mean, and pass it into the classifier
             # Hint: same as the full model and head-tuned model
 
+            # get the last hidden state from the output object using `.last_hidden_state`
+            last_hidden_state = output.last_hidden_state
 
+            # take the mean of the last hidden state along the sequence length dimension
+            means = torch.mean(last_hidden_state, dim=1) # TODO: Which dimension?
 
+            # pass the mean into the self.classifier to get the logits
+            logits = self.classifier(means)
             # your code ends here
 
         return {"logits": logits}
     
+  
 def print_gpu_memory():
     """
     Print the amount of GPU memory used by the current process
@@ -158,7 +184,7 @@ class BoolQADataset(torch.utils.data.Dataset):
             'labels': torch.tensor(answer, dtype=torch.long)  # labels are the answers (yes/no)
         }
 
-
+'''Return the accuracy of a model on ??? data set'''
 def evaluate_model(model, dataloader, device):
     """
     Evaluate a PyTorch Model
@@ -353,6 +379,7 @@ def train(mymodel, num_epochs, train_dataloader, validation_dataloader, test_dat
 
     plot(train_acc_list, dev_acc_list, name=model_name, finetune_method=mymodel.type)
 
+
 def plot(train_list, valid_list, name, finetune_method):
     
     plt.figure()
@@ -364,7 +391,7 @@ def plot(train_list, valid_list, name, finetune_method):
     plt.legend()
     plt.savefig(f'{name}_{finetune_method}.png')
 
-
+'''Tokenize and create dataloaders'''
 def pre_process(model_name, batch_size, device, small_subset, type='auto'):
     # download dataset
     print("Loading the dataset ...")
