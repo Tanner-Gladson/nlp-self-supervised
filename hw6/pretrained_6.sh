@@ -14,4 +14,4 @@ source ~/.bashrc
 conda activate ssm_hw5 # activate the Python environment
 
 # runs your code
-python -u main.py
+python base_classification.py --device cuda --model "roberta-base" --batch_size "64" --lr 1e-4 --num_epochs 30 
