@@ -49,7 +49,6 @@ class CustomModelforSequenceClassification(nn.Module):
             # your code ends here
 
         elif self.type == "head":
-            raise NotImplementedError("You need to implement the forward function for the head-tuned model")
             # Hint: it should be the same as the full model
         
             # pass the input_ids and attention_mask into the model to get the output object (you can name it `output`)
@@ -69,7 +68,6 @@ class CustomModelforSequenceClassification(nn.Module):
         elif self.type == 'prefix':
 
             # TODO: implement the forward function for the prefix-tuned model
-            raise NotImplementedError("You need to implement the forward function for the prefix-tuned model")
 
             # the prefix is at self.prefix, but this is only one prefix, we want to append it to each instance in a batch
             # we make multiple copies of self.prefix here. the number of copies = batch size
