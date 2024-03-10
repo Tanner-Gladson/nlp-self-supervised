@@ -41,7 +41,7 @@ class CustomModelforSequenceClassification(nn.Module):
             last_hidden_state = output.last_hidden_state
 
             # take the mean of the last hidden state along the sequence length dimension
-            means = torch.mean(last_hidden_state, dim=1) # TODO: Which dimension?
+            means = last_hidden_state.mean(dim=1)
 
             # pass the mean into the self.classifier to get the logits
             logits = self.classifier(means)
@@ -58,7 +58,7 @@ class CustomModelforSequenceClassification(nn.Module):
             last_hidden_state = output.last_hidden_state
 
             # take the mean of the last hidden state along the sequence length dimension
-            means = torch.mean(last_hidden_state, dim=1) # TODO: Which dimension?
+            means = torch.mean(last_hidden_state, dim=1)
 
             # pass the mean into the self.classifier to get the logits
             logits = self.classifier(means)
@@ -67,7 +67,7 @@ class CustomModelforSequenceClassification(nn.Module):
         
         elif self.type == 'prefix':
 
-            # TODO: implement the forward function for the prefix-tuned model
+            # TODONE: implement the forward function for the prefix-tuned model
 
             # the prefix is at self.prefix, but this is only one prefix, we want to append it to each instance in a batch
             # we make multiple copies of self.prefix here. the number of copies = batch size
@@ -76,7 +76,7 @@ class CustomModelforSequenceClassification(nn.Module):
             
             # get the input embeddings
             # Hint: you can use self.model.embeddings.word_embeddings to get the input embeddings
-            prefix_embeddings = self.model.embeddings.word_embeddings(prefixes)
+            prefix_embeddings = self.model.prefix.unsqueeze(0).repeat(batch_size, 1, 1)
             input_embeddings = self.model.embeddings.word_embeddings(input_ids)
 
             # concatenate the input embeddings and the prefix
@@ -93,9 +93,8 @@ class CustomModelforSequenceClassification(nn.Module):
             # we need to add the prefix to the attention mask
             # the mask on the prefix should be 1, with the dimension of (batch_size, prefix_length)
             # name the final attention mask as `attention_mask`
-            prepended_mask = torch.ones(batch_size, prefix_length)
+            prepended_mask = torch.ones(batch_size, prefix_length, dtype=attention_mask.dtype)
             attention_mask = torch.cat((prepended_mask, attention_mask), dim=1)
-
 
             # pass the input embeddings and the attention mask into the model
             # you can do this by passing a keyword argument "inputs_embeds" to model.forward
@@ -109,7 +108,7 @@ class CustomModelforSequenceClassification(nn.Module):
             last_hidden_state = output.last_hidden_state
 
             # take the mean of the last hidden state along the sequence length dimension
-            means = torch.mean(last_hidden_state, dim=1) # TODO: Which dimension?
+            means = torch.mean(last_hidden_state, dim=1) 
 
             # pass the mean into the self.classifier to get the logits
             logits = self.classifier(means)
@@ -252,24 +251,19 @@ def train(mymodel, num_epochs, train_dataloader, validation_dataloader, test_dat
     # need to customize optimizer for prefix-tuning and head tuning
 
     if mymodel.type == "head":
-        # TODO: implement the optimizer for head-tuned model
-        raise NotImplementedError("You need to implement the optimizer for head-tuned model")
+        # TODONE: implement the optimizer for head-tuned model
         # you need to get the parameters of the classifier (head), you can do this by calling mymodel.head.parameters()
-
-        # then you need to pass these parameters to the optimizer
-        # name the optimizer as `custom_optimizer`
-        # Hints: you can refer to how we do this for the optimizer above
-
+        custom_optimizer = torch.optim.AdamW(mymodel.classifier.parameters(), lr=lr)
         # your code ends here
     
     elif mymodel.type == "prefix":
-        # TODO: implement the optimizer for prefix-tuned model
-        raise NotImplementedError("You need to implement the optimizer for prefix-tuned model")
+        # TODONE: implement the optimizer for prefix-tuned model
         # you need to get the parameters of the prefix, you can do this by calling mymodel.prefix
         # name the parameters as `prefix_params`
-
         # you also need to get the parameters of the classifier (head), you can do this by calling mymodel.head.parameters()
         # name the parameters as `classifier_params`
+        prefix_params = mymodel.prefix
+        classifier_params = mymodel.classifier.parameters()
 
         # your code ends here
         # group the parameters together
@@ -319,26 +313,24 @@ def train(mymodel, num_epochs, train_dataloader, validation_dataloader, test_dat
             Then, compute the accuracy using the logits and the labels.
             """
 
-            # TODO: implement the training loop
-            raise NotImplementedError("You need to implement this function")
+            # TODONE: implement the training loop
 
             # get the input_ids, attention_mask, and labels from the batch and put them on the device
             # Hints: similar to the evaluate_model function
-
-
+            input_ids = batch['input_ids'].to(device)
+            attention_mask = batch['attention_mask'].to(device)
+            labels = batch['labels'].to(device)
 
             # forward pass
             # name the output as `output`
             # Hints: refer to the evaluate_model function on how to get the predictions (logits)
             # - It's slightly different from the implementation in train of base_classification.py
+            output = mymodel(input_ids=input_ids, attention_mask=attention_mask)
+            predictions = output['logits']
 
-
-
-            # compute the loss using the loss function
-
-
-            # loss backward
-
+            # compute the loss using the loss function, backprop
+            loss_val = loss(predictions, labels)
+            loss_val.backward()
             # your code ends here
 
             # update the model parameters depending on the model type
@@ -351,9 +343,9 @@ def train(mymodel, num_epochs, train_dataloader, validation_dataloader, test_dat
                 lr_scheduler.step()
                 custom_optimizer.zero_grad()
 
-            predictions = torch.argmax(predictions, dim=1)
             
             # update metrics
+            predictions = torch.argmax(predictions, dim=1)
             train_accuracy.add_batch(predictions=predictions, references=batch['labels'])
 
         # print evaluation metrics
@@ -497,3 +489,24 @@ if __name__ == "__main__":
 
     test_accuracy = evaluate_model(pretrained_model, test_dataloader, args.device)
     print(f" - Average TEST metrics: accuracy={test_accuracy}")
+
+
+'''
+Notes:
+
+It seems that we have X different classes in increasing level of abstraction
+ - torch.Tensor
+ -> Stores weights as tensor entries
+ -> Can store gradient of loss w.r.t. itself
+ - nn._WeightedLoss
+ -> Will calculate a loss
+ -> Also performs backpropogation
+ - nn.Module
+ -> Provides a framework for
+   1) Forward propogation
+   2) Caching layer-by-layer results
+ - torch.Optimizer
+ -> Holds a reference to the model parameters/tensors
+ -> Adjusts based on the gradients stored in the parameters/tensors
+
+'''
