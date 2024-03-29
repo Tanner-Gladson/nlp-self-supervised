@@ -221,7 +221,7 @@ def main():
     
     optimizer, scheduler = accelerator.prepare(optimizer, scheduler)
 
-    # TODO: Set up trainer
+    # TODONE: Set up trainer
     # - Complete the PPOTrainer class and return a varaiable `trainer`
     # Hints:
     # - we have defined all the necessary variables/objects for passing to the PPOTrainer class arguments
@@ -229,17 +229,20 @@ def main():
     #   Refer to `./src/rlhf/ppo.py` to get all required arguments
     # - set the `args`, `train_dataloader`, `eval_dataloader`, `ref_policy_model`, `policy_model`, `value_model`,
     #   `reward_model`, `optimizer`, `scheduler`, `accelerator`, `log_info` arguments
-    raise NotImplementedError("Set up trainer")
 
-
-
-
-
-
-
-
-
-
+    trainer = PPOTrainer(
+        args=args,
+        train_dataloader=train_dataloader,
+        eval_dataloader=eval_dataloader,
+        ref_policy_model=ref_policy,
+        policy_model=policy,
+        value_model=value,
+        reward_model=reward,
+        optimizer=optimizer,
+        scheduler=scheduler,
+        accelerator=accelerator,
+        log_info=log_info, # Function
+    )
 
 
 

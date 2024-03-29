@@ -3,12 +3,13 @@ import os
 import sys
 import json
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Dict, Optional
 
 import datasets
 import nltk  
 import numpy as np
 from datasets import load_dataset, Dataset
+import torch
 
 import evaluate
 import transformers
@@ -284,12 +285,14 @@ def main():
 
         inputs = [prefix + inp for inp in inputs]
 
-        ## TODO: Tokenize inputs
+        ## TODONE: Tokenize inputs
         # - Create a dictionary named `model_inputs` with datatype Dict[str, torch.Tensor]
         # Hints:
         # - we have defined `max_source_length` and `padding` above
         # - call the `tokenizer()` to tokenize the inputs, and set the `max_length`, `padding`, and `truncation` (set to True) arguments
-        raise NotImplementedError("Tokenize inputs")
+    
+        # OK, so the tokenizer returns a dictionary of 2nd rank tensors, which all have size (batch_size x context_window_size)
+        model_inputs : Dict[str, torch.Tensor] = tokenizer(examples[input_column], max_length=data_args.max_source_length, padding=padding, truncation=True)
 
         # Tokenize targets
         # Create a dictionary named `labels` with datatype Dict[str, torch.Tensor]
@@ -298,6 +301,9 @@ def main():
         # - set the keyword argument `text_target` to the targets
         # - the max_length is different from the inputs
         # - other keyword arguments are the same as the inputs
+
+        # TODO: Maybe the text_target kwarg is wrong?
+        labels : Dict[str, torch.Tensor] = tokenizer(text_target=examples[output_column], max_length=data_args.max_target_length, padding=padding, truncation=True)
 
         # your code ends here
 
@@ -392,22 +398,24 @@ def main():
 
     training_args.per_device_train_batch_size = 4
     training_args.per_device_eval_batch_size = 4
-    # TODO: Initialize our Trainer
+    # TODONE: Initialize our Trainer
     # name it `trainer`
     # Hints:
     # - check out the `Seq2SeqTrainer` class (https://huggingface.co/docs/transformers/main_classes/trainer#transformers.Seq2SeqTrainer)
     # - use pre-defined arguments and functions/objects
     # - set the `model`, `args`, `train_dataset`, `eval_dataset`, `tokenizer`, `data_collator`, and `compute_metrics` arguments
     # - see how we define/create these variables above
-    raise NotImplementedError("Initialize our Trainer")
 
 
-
-
-
-
-
-
+    trainer = Seq2SeqTrainer(
+        model=model,
+        args=training_args,
+        train_dataset=train_dataset, # Preprocessed already
+        eval_dataset=eval_dataset, # Preprocessed already
+        tokenizer=tokenizer, # Why do we need to pass in the tokenizer?
+        data_collator=data_collator, # WWhy do we need a special data collater?
+        compute_metrics=compute_metrics,
+    )
 
     # your code ends here
 
