@@ -14,4 +14,4 @@ source ~/.bashrc
 conda activate ssm_hw5 # activate the Python environment
 
 # runs your code
-python base_classification.py --device cuda --model "distilbert-base-uncased" --batch_size "64" --lr 1e-4 --num_epochs 30 
+python base_classification.py --device cuda --model "distilbert-base-uncased" --batch_size "96" --lr 1e-4 --num_epochs 30 

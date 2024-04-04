@@ -1,0 +1,75 @@
+/data/apps/linux-centos8-cascadelake/gcc-9.3.0/anaconda3-2020.07-i7qavhiohb2uwqs4eqjeefzx3kp5jqdu/etc/profile.d/conda.csh: line 1: setenv: command not found
+/data/apps/linux-centos8-cascadelake/gcc-9.3.0/anaconda3-2020.07-i7qavhiohb2uwqs4eqjeefzx3kp5jqdu/etc/profile.d/conda.csh: line 2: setenv: command not found
+/data/apps/linux-centos8-cascadelake/gcc-9.3.0/anaconda3-2020.07-i7qavhiohb2uwqs4eqjeefzx3kp5jqdu/etc/profile.d/conda.csh: line 3: setenv: command not found
+/data/apps/linux-centos8-cascadelake/gcc-9.3.0/anaconda3-2020.07-i7qavhiohb2uwqs4eqjeefzx3kp5jqdu/etc/profile.d/conda.csh: line 4: setenv: command not found
+/data/apps/linux-centos8-cascadelake/gcc-9.3.0/anaconda3-2020.07-i7qavhiohb2uwqs4eqjeefzx3kp5jqdu/etc/profile.d/conda.csh: line 34: syntax error near unexpected token `"${1}"'
+/data/apps/linux-centos8-cascadelake/gcc-9.3.0/anaconda3-2020.07-i7qavhiohb2uwqs4eqjeefzx3kp5jqdu/etc/profile.d/conda.csh: line 34: `    switch ( "${1}" )'
+Specified arguments: Namespace(small_subset=False, num_epochs=30, lr=0.0001, batch_size=64, device='cuda', model='bert-base-uncased')
+Loading the dataset ...
+Slicing the data...
+Size of the loaded dataset:
+ - train: 8000
+ - dev: 3270
+ - test: 1427
+Loading the tokenizer...
+tokenizer_config.json:   0%|          | 0.00/48.0 [00:00<?, ?B/s]tokenizer_config.json: 100%|██████████| 48.0/48.0 [00:00<00:00, 435kB/s]
+config.json:   0%|          | 0.00/570 [00:00<?, ?B/s]config.json: 100%|██████████| 570/570 [00:00<00:00, 5.21MB/s]
+vocab.txt:   0%|          | 0.00/232k [00:00<?, ?B/s]vocab.txt: 100%|██████████| 232k/232k [00:00<00:00, 6.52MB/s]
+tokenizer.json:   0%|          | 0.00/466k [00:00<?, ?B/s]tokenizer.json: 100%|██████████| 466k/466k [00:00<00:00, 1.37MB/s]tokenizer.json: 100%|██████████| 466k/466k [00:00<00:00, 1.37MB/s]
+Loding the data into DS...
+ >>>>>>>> Initializing the data loaders ... 
+Loading the model ...
+model.safetensors:   0%|          | 0.00/440M [00:00<?, ?B/s]model.safetensors:   2%|▏         | 10.5M/440M [00:00<00:07, 57.1MB/s]model.safetensors:   7%|▋         | 31.5M/440M [00:00<00:04, 92.3MB/s]model.safetensors:  12%|█▏        | 52.4M/440M [00:00<00:03, 101MB/s] model.safetensors:  14%|█▍        | 62.9M/440M [00:00<00:04, 92.6MB/s]model.safetensors:  19%|█▉        | 83.9M/440M [00:00<00:03, 96.0MB/s]model.safetensors:  24%|██▍       | 105M/440M [00:01<00:03, 101MB/s]  model.safetensors:  26%|██▌       | 115M/440M [00:01<00:03, 101MB/s]model.safetensors:  31%|███       | 136M/440M [00:01<00:02, 108MB/s]model.safetensors:  36%|███▌      | 157M/440M [00:01<00:02, 109MB/s]model.safetensors:  40%|████      | 178M/440M [00:01<00:02, 110MB/s]model.safetensors:  45%|████▌     | 199M/440M [00:01<00:02, 109MB/s]model.safetensors:  50%|████▉     | 220M/440M [00:02<00:01, 111MB/s]model.safetensors:  55%|█████▍    | 241M/440M [00:02<00:01, 111MB/s]model.safetensors:  60%|█████▉    | 262M/440M [00:02<00:01, 110MB/s]model.safetensors:  64%|██████▍   | 283M/440M [00:02<00:01, 111MB/s]model.safetensors:  69%|██████▉   | 304M/440M [00:02<00:01, 108MB/s]model.safetensors:  74%|███████▍  | 325M/440M [00:03<00:01, 111MB/s]model.safetensors:  79%|███████▊  | 346M/440M [00:03<00:00, 111MB/s]model.safetensors:  83%|████████▎ | 367M/440M [00:03<00:00, 112MB/s]model.safetensors:  88%|████████▊ | 388M/440M [00:03<00:00, 110MB/s]model.safetensors:  93%|█████████▎| 409M/440M [00:03<00:00, 108MB/s]model.safetensors:  98%|█████████▊| 430M/440M [00:04<00:00, 105MB/s]model.safetensors: 100%|██████████| 440M/440M [00:04<00:00, 106MB/s]
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at bert-base-uncased and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+Moving model to device ...cuda
+ >>>>>>>>  Starting training ... 
+ >>>>>>>>  Initializing optimizer
+Epoch 1 training:
+0it [00:00, ?it/s]1it [00:02,  2.64s/it]2it [00:04,  2.31s/it]3it [00:06,  2.21s/it]4it [00:08,  2.16s/it]5it [00:10,  2.13s/it]6it [00:13,  2.12s/it]7it [00:15,  2.11s/it]8it [00:17,  2.10s/it]9it [00:19,  2.09s/it]10it [00:21,  2.09s/it]11it [00:23,  2.09s/it]12it [00:25,  2.09s/it]13it [00:27,  2.09s/it]14it [00:29,  2.09s/it]15it [00:31,  2.09s/it]16it [00:33,  2.09s/it]17it [00:36,  2.09s/it]18it [00:38,  2.09s/it]19it [00:40,  2.09s/it]20it [00:42,  2.09s/it]21it [00:44,  2.09s/it]22it [00:46,  2.09s/it]23it [00:48,  2.09s/it]24it [00:50,  2.09s/it]25it [00:52,  2.09s/it]26it [00:54,  2.09s/it]27it [00:56,  2.09s/it]28it [00:58,  2.09s/it]29it [01:01,  2.09s/it]30it [01:03,  2.09s/it]31it [01:05,  2.09s/it]32it [01:07,  2.08s/it]33it [01:09,  2.08s/it]34it [01:11,  2.08s/it]35it [01:13,  2.08s/it]36it [01:15,  2.08s/it]37it [01:17,  2.08s/it]38it [01:19,  2.08s/it]39it [01:21,  2.08s/it]40it [01:23,  2.09s/it]41it [01:26,  2.09s/it]42it [01:28,  2.09s/it]43it [01:30,  2.09s/it]44it [01:32,  2.09s/it]45it [01:34,  2.09s/it]46it [01:36,  2.09s/it]47it [01:38,  2.09s/it]48it [01:40,  2.09s/it]49it [01:42,  2.09s/it]50it [01:44,  2.09s/it]51it [01:46,  2.09s/it]52it [01:48,  2.08s/it]53it [01:51,  2.08s/it]54it [01:53,  2.08s/it]55it [01:55,  2.08s/it]56it [01:57,  2.09s/it]57it [01:59,  2.09s/it]58it [02:01,  2.09s/it]59it [02:03,  2.09s/it]60it [02:05,  2.09s/it]61it [02:07,  2.09s/it]62it [02:09,  2.09s/it]63it [02:11,  2.09s/it]64it [02:14,  2.09s/it]65it [02:16,  2.09s/it]66it [02:18,  2.09s/it]67it [02:20,  2.09s/it]68it [02:22,  2.09s/it]69it [02:24,  2.09s/it]70it [02:26,  2.09s/it]71it [02:28,  2.09s/it]72it [02:30,  2.09s/it]73it [02:32,  2.09s/it]74it [02:34,  2.09s/it]75it [02:36,  2.09s/it]76it [02:39,  2.09s/it]77it [02:41,  2.09s/it]78it [02:43,  2.09s/it]79it [02:45,  2.09s/it]80it [02:47,  2.09s/it]81it [02:49,  2.09s/it]82it [02:51,  2.09s/it]83it [02:53,  2.09s/it]84it [02:55,  2.09s/it]85it [02:57,  2.08s/it]86it [02:59,  2.08s/it]87it [03:01,  2.08s/it]88it [03:04,  2.08s/it]89it [03:06,  2.08s/it]90it [03:08,  2.08s/it]91it [03:10,  2.08s/it]92it [03:12,  2.08s/it]93it [03:14,  2.08s/it]94it [03:16,  2.08s/it]95it [03:18,  2.08s/it]96it [03:20,  2.08s/it]97it [03:22,  2.08s/it]98it [03:24,  2.08s/it]99it [03:26,  2.08s/it]100it [03:28,  2.08s/it]101it [03:31,  2.08s/it]102it [03:33,  2.08s/it]103it [03:35,  2.08s/it]104it [03:37,  2.08s/it]105it [03:39,  2.08s/it]106it [03:41,  2.08s/it]107it [03:43,  2.08s/it]108it [03:45,  2.08s/it]109it [03:47,  2.08s/it]110it [03:49,  2.08s/it]111it [03:51,  2.08s/it]112it [03:53,  2.08s/it]113it [03:55,  2.08s/it]114it [03:58,  2.08s/it]115it [04:00,  2.08s/it]116it [04:02,  2.08s/it]117it [04:04,  2.08s/it]118it [04:06,  2.08s/it]119it [04:08,  2.08s/it]120it [04:10,  2.08s/it]121it [04:12,  2.08s/it]122it [04:14,  2.08s/it]123it [04:16,  2.08s/it]124it [04:18,  2.08s/it]125it [04:20,  2.08s/it]125it [04:20,  2.09s/it]
+ ===> Epoch 1
+ - Average training metrics: accuracy={'accuracy': 0.5795}
+Traceback (most recent call last):
+  File "/home/cs601-tgladso1/nlp-self-supervised/hw6/base_classification.py", line 323, in <module>
+    train(pretrained_model, args.num_epochs, train_dataloader, validation_dataloader, test_dataloader, args.device, args.lr, args.small_subset)
+  File "/home/cs601-tgladso1/nlp-self-supervised/hw6/base_classification.py", line 214, in train
+    val_accuracy = evaluate_model(mymodel, validation_dataloader, device)
+  File "/home/cs601-tgladso1/nlp-self-supervised/hw6/base_classification.py", line 105, in evaluate_model
+    output = model(input_ids=input_ids, attention_mask=attention_mask)
+  File "/home/cs601-tgladso1/.conda/envs/ssm_hw5/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/cs601-tgladso1/.conda/envs/ssm_hw5/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/cs601-tgladso1/.conda/envs/ssm_hw5/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 1564, in forward
+    outputs = self.bert(
+  File "/home/cs601-tgladso1/.conda/envs/ssm_hw5/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/cs601-tgladso1/.conda/envs/ssm_hw5/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/cs601-tgladso1/.conda/envs/ssm_hw5/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 1013, in forward
+    encoder_outputs = self.encoder(
+  File "/home/cs601-tgladso1/.conda/envs/ssm_hw5/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/cs601-tgladso1/.conda/envs/ssm_hw5/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/cs601-tgladso1/.conda/envs/ssm_hw5/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 607, in forward
+    layer_outputs = layer_module(
+  File "/home/cs601-tgladso1/.conda/envs/ssm_hw5/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/cs601-tgladso1/.conda/envs/ssm_hw5/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/cs601-tgladso1/.conda/envs/ssm_hw5/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 497, in forward
+    self_attention_outputs = self.attention(
+  File "/home/cs601-tgladso1/.conda/envs/ssm_hw5/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/cs601-tgladso1/.conda/envs/ssm_hw5/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/cs601-tgladso1/.conda/envs/ssm_hw5/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 427, in forward
+    self_outputs = self.self(
+  File "/home/cs601-tgladso1/.conda/envs/ssm_hw5/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/cs601-tgladso1/.conda/envs/ssm_hw5/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/cs601-tgladso1/.conda/envs/ssm_hw5/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 365, in forward
+    context_layer = torch.matmul(attention_probs, value_layer)
+torch.cuda.OutOfMemoryError: CUDA out of memory. Tried to allocate 24.00 MiB. GPU 0 has a total capacity of 9.50 GiB of which 20.00 MiB is free. Process 1560060 has 9.19 GiB memory in use. Process 1595879 has 6.28 GiB memory in use. Including non-PyTorch memory, this process has 9.46 GiB memory in use. Process 1635326 has 4.06 GiB memory in use. Of the allocated memory 9.17 GiB is allocated by PyTorch, and 198.06 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)

@@ -290,9 +290,9 @@ def main():
         # Hints:
         # - we have defined `max_source_length` and `padding` above
         # - call the `tokenizer()` to tokenize the inputs, and set the `max_length`, `padding`, and `truncation` (set to True) arguments
-    
+        
         # OK, so the tokenizer returns a dictionary of 2nd rank tensors, which all have size (batch_size x context_window_size)
-        model_inputs : Dict[str, torch.Tensor] = tokenizer(examples[input_column], max_length=data_args.max_source_length, padding=padding, truncation=True)
+        model_inputs : Dict[str, torch.Tensor] = tokenizer(inputs, max_length=data_args.max_source_length, padding=padding, truncation=True)
 
         # Tokenize targets
         # Create a dictionary named `labels` with datatype Dict[str, torch.Tensor]
@@ -303,7 +303,7 @@ def main():
         # - other keyword arguments are the same as the inputs
 
         # TODO: Maybe the text_target kwarg is wrong?
-        labels : Dict[str, torch.Tensor] = tokenizer(text_target=examples[output_column], max_length=data_args.max_target_length, padding=padding, truncation=True)
+        labels : Dict[str, torch.Tensor] = tokenizer(targets, text_target=targets, max_length=data_args.max_target_length, padding=padding, truncation=True)
 
         # your code ends here
 
@@ -408,12 +408,12 @@ def main():
 
 
     trainer = Seq2SeqTrainer(
-        model=model,
-        args=training_args,
-        train_dataset=train_dataset, # Preprocessed already
-        eval_dataset=eval_dataset, # Preprocessed already
-        tokenizer=tokenizer, # Why do we need to pass in the tokenizer?
-        data_collator=data_collator, # WWhy do we need a special data collater?
+        model=model, # Retrieved using AutoModel class, inherits from PreTrainedModel
+        args=training_args, # Originally parsed by HFArgParser
+        train_dataset=train_dataset, # Already pre-processed
+        eval_dataset=eval_dataset, # Already pre-processed
+        tokenizer=tokenizer, # Retrieved using AutoTokenizer class
+        data_collator=data_collator, # Responsible for batching, may apply padding
         compute_metrics=compute_metrics,
     )
 
@@ -478,7 +478,7 @@ def main():
                 )
                 predictions = [pred.strip() for pred in predictions]
                 output_prediction_file = os.path.join(training_args.output_dir, "generated_predictions.txt")
-                with open(output_prediction_file, "w") as writer:
+                with open(output_prediction_file, "w", encoding="utf-8") as writer:
                     writer.write("\n".join(predictions))
 
     return results

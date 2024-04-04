@@ -1,6 +1,5 @@
 #!/bin/bash
 
-#SBATCH -A cs601471
 #SBATCH --partition=mig_class
 #SBATCH --gres=gpu:1
 #SBATCH --nodes=1
@@ -12,6 +11,8 @@
 
 module load anaconda
 conda activate ssm_hw7 # activate the Python environment
+
+ping -c 5 wandb.ai
 
 # initialize the policy model
 python ./run_sft.py \
